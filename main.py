@@ -1,16 +1,34 @@
-# This is a sample Python script.
+from database import engine, get_db
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, status, Response, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from event import eventRoute
+from job import jobRoute
+from login import loginRoute
+from role import roleRoute
+from training import trainingRoute
+
+app = FastAPI()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
+origins = [
+    "http://localhost",
+    "http://localhost:4200",
+]
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+app.include_router(loginRoute.router)
+app.include_router(roleRoute.router)
+app.include_router(eventRoute.router)
+app.include_router(jobRoute.router)
+app.include_router(trainingRoute.router)
